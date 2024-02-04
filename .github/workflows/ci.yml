@@ -1,0 +1,36 @@
+name: Laravel Online Shop Dashboard
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  laravel-tests:
+
+    runs-on: ubuntu-latest
+    environment: LaravelDocker
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Copy .env
+      run: cp .env.example .env
+    - name: Setting up APP_NAME
+      run: sed -i 's/APP_NAME=Laravel/APP_NAME=${{ vars.APP_NAME }}/g' .env
+    - name: Setting up DB_HOST
+      run: sed -i 's/DB_HOST=127.0.0.1/DB_HOST=${{ vars.APP_NAME }}-db/g' .env
+    - name: Setting up DB_DATABASE
+      run: sed -i 's/DB_DATABASE=laravel/DB_DATABASE=${{ vars.DB_DATABASE }}/g' .env
+    - name: Setting up DB_USERNAME
+      run: sed -i 's/DB_USERNAME=root/DB_USERNAME=${{ vars.DB_USERNAME }}/g' .env
+    - name: Setting up DB_PASSWORD
+      run: sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ vars.DB_PASSWORD }}/g' .env
+    - name: Show .env
+      run: cat .env
+    - name: Setting up docker
+      run: make setup
+    - name: Generate data
+      run: make data
+    - name: Stopping the docker images
+      run: make stop

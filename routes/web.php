@@ -15,6 +15,10 @@ use App\Http\Controllers\UserController;
 */
 
 Route::get('/', function () {
+    // Check if user is logged in already
+    if (auth()->check()) {
+        return redirect()->route('home');
+    }
     return view('pages.auth.login');
 });
 

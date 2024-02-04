@@ -1,0 +1,47 @@
+version: "3.8"
+
+networks:
+    olshopcwb:
+        name: olshopcwb
+
+services:
+    nginx:
+        build:
+            context: .
+            dockerfile: ./nginx/Dockerfile
+        depends_on:
+            - app
+            - database
+        container_name: ${APP_NAME}-nginx
+        environment:
+            - CONTAINER_NAME=${APP_NAME}-app
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - $PWD:/var/www/html
+        networks:
+            - olshopcwb
+
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ${APP_NAME}-app
+        volumes:
+            - $PWD:/var/www/html
+        networks:
+            - olshopcwb
+
+    database:
+        image: mysql:8.3.0
+        container_name: ${APP_NAME}-db
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+            MYSQL_DATABASE: $DB_DATABASE
+            MYSQL_USER: $DB_USERNAME
+            MYSQL_PASSWORD: $DB_PASSWORD
+        networks:
+            - olshopcwb
