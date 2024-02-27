@@ -47,7 +47,7 @@ class ProductController extends Controller
         }
         $product->updated_at = now();
         $product->save();
-        return redirect()->route('product.index');
+        return redirect()->route('product.index')->with('success', 'Product updated successfully');
     }
 
     // destroy
@@ -55,14 +55,14 @@ class ProductController extends Controller
     {
         $product = \App\Models\Product::find($id);
         $product->delete();
-        return redirect()->route('product.index');
+        return redirect()->route('product.index')->with('success', 'Product deleted successfully');
     }
 
     //store
     public function store(Request $request)
     {
-        $filename = time() . '.' . $request->image->extension();
-        $request->image->storeAs('public/products', $filename);
+        $filename = time() . '.' . $request->image->getClientOriginalExtension();
+        $request->image->move(public_path( 'img/products' ), $filename);
         // $data = $request->all();
 
         $product = new \App\Models\Product;
@@ -70,9 +70,9 @@ class ProductController extends Controller
         $product->price = (int) $request->price;
         $product->stock = (int) $request->stock;
         $product->category_id = $request->category_id;
-        $product->image = $filename;
+        $product->image = url('img/products/' . $filename);
         $product->save();
 
-        return redirect()->route('product.index');
+        return redirect()->route('product.index')->with('success', 'Product created successfully');
     }
 }

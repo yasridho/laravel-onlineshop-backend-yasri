@@ -26,4 +26,4 @@ data-fresh:
 	docker exec $(APP_NAME)-app /bin/sh -c "php artisan migrate:fresh --seed"
 
 console:
-	docker exec -it $(APP_NAME)-app /bin/sh
+	docker exec -it --user laravel:laravel $(APP_NAME)-app /bin/sh
